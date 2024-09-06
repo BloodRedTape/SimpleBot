@@ -154,7 +154,7 @@ TgBot::Message::Ptr SimpleBot::SendMessage(std::int64_t chat, std::int32_t topic
     return result;
 }
 
-TgBot::Message::Ptr SimpleBot::SendMessage(TgBot::Message::Ptr source, const std::string& message, bool reply = false){ 
+TgBot::Message::Ptr SimpleBot::SendMessage(TgBot::Message::Ptr source, const std::string& message, bool reply){ 
     if(!source)
         return nullptr; 
         
