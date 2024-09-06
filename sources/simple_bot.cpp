@@ -154,6 +154,13 @@ TgBot::Message::Ptr SimpleBot::SendMessage(std::int64_t chat, std::int32_t topic
     return result;
 }
 
+TgBot::Message::Ptr SimpleBot::SendMessage(TgBot::Message::Ptr source, const std::string& message, bool reply = false){ 
+    if(!source)
+        return nullptr; 
+        
+    return SendMessage(source->chat->id, source->isTopicMessage ? source->messageThreadId : 0, message, reply ? source->messageId : 0); 
+}
+
 TgBot::Message::Ptr SimpleBot::EditMessage(TgBot::Message::Ptr message, const std::string& text, const KeyboardLayout& keyboard) {
     return EditMessage(message, text, ToInlineKeyboardMarkup(keyboard));
 }

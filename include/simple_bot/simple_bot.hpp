@@ -73,8 +73,8 @@ public:
 
     TgBot::Message::Ptr SendMessage(std::int64_t chat, std::int32_t topic, const std::string& message, std::int64_t reply_message = 0);
 
-    TgBot::Message::Ptr SendMessage(TgBot::Message::Ptr source, const std::string& message, bool reply = false){return SendMessage(source->chat->id, source->isTopicMessage ? source->messageThreadId : 0, message, reply ? source->messageId : 0); }
-
+    TgBot::Message::Ptr SendMessage(TgBot::Message::Ptr source, const std::string& message, bool reply = false);
+    
     TgBot::Message::Ptr ReplyMessage(TgBot::Message::Ptr source, const std::string& message){return SendMessage(source, message, true); }
 
     //source->isTopicMessage ? source->messageThreadId : 0
