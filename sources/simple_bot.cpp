@@ -344,8 +344,11 @@ std::size_t SimpleBot::GetCommandLength(TgBot::Message::Ptr message){
 
 	for (auto i = 0; i < message->text.size(); i++) {
 		char c = message->text[i];
-		if (std::isalpha(c) || std::isdigit(c) || std::ispunct(c))
+		if (std::isalpha(c) || std::isdigit(c) || std::ispunct(c)){
+            if(i == message->text.size() - 1)
+                return message->text.size();
 			continue;
+        }
 
 		return i;
 	}
