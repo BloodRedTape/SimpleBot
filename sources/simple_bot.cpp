@@ -369,6 +369,9 @@ std::string SimpleBot::GetTextWithoutCommand(TgBot::Message::Ptr message) {
     if(!length)
         return {};
 
+    if(message->text.size() == length)
+        return "";
+
 	return message->text.substr(length);
 }
 
