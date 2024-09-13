@@ -136,9 +136,11 @@ public:
 
     std::string ParseCommand(TgBot::Message::Ptr message);
 
-    static std::size_t GetCommandLength(TgBot::Message::Ptr message);
+    static std::size_t GetCommandLength(const std::string &text);
 
     static std::string GetTextWithoutCommand(TgBot::Message::Ptr message);
+
+    static std::string GetTextWithoutCommand(const std::string &text);
 };
 
 template<typename Type>

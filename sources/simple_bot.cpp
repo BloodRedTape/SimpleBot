@@ -69,19 +69,28 @@ static TgBot::InlineKeyboardMarkup::Ptr ToInlineKeyboardMarkup(const KeyboardLay
 SimpleBot::SimpleBot(const std::string& token):
 	TgBot::Bot(token)
 {
-    getEvents().onUnknownCommand([this](TgBot::Message::Ptr message) {
+    auto handle_command = [this](TgBot::Message::Ptr message) {
         std::string command = ParseCommand(message);
 
         if (!command.size()) {
             return;
         }
-        
-        try{
+
+        try {
             BroadcastCommand(command, message);
-        } catch (const std::exception& e) {
+        }
+        catch (const std::exception& e) {
             Log("Caught exception on '%' command broadcast: %", command, e.what());
         }
+    };
+
+    getEvents().onAnyMessage([=](TgBot::Message::Ptr message) {
+        if(!message->caption.size())
+            return;
+
+        handle_command(message);
     });
+    getEvents().onUnknownCommand(handle_command);
 
     try{
         m_Username = getApi().getMe()->username;
@@ -317,7 +326,9 @@ void SimpleBot::UpdateCommandDescriptions() {
 }
 
 std::string SimpleBot::ParseCommand(TgBot::Message::Ptr message){
-    auto length = GetCommandLength(message);
+    const auto &text = message->text.size() ? message->text : message->caption;
+
+    auto length = GetCommandLength(text);
 
     if(!length)
         return {};
@@ -325,7 +336,7 @@ std::string SimpleBot::ParseCommand(TgBot::Message::Ptr message){
     const char Space = ' ';
     const char At = '@';
 
-    std::string command_name = message->text.substr(0, length);
+    std::string command_name = text.substr(0, length);
 
     std::size_t at = command_name.find(At);
     std::size_t end = std::min(at, command_name.size());
@@ -345,15 +356,15 @@ std::string SimpleBot::ParseCommand(TgBot::Message::Ptr message){
     return command;
 }
 
-std::size_t SimpleBot::GetCommandLength(TgBot::Message::Ptr message){
-	if(!message->text.size() || message->text.front() != '/')
+std::size_t SimpleBot::GetCommandLength(const std::string &text){
+	if(!text.size() || text.front() != '/')
 		return 0;
 
-	for (auto i = 0; i < message->text.size(); i++) {
-		char c = message->text[i];
+	for (auto i = 0; i < text.size(); i++) {
+		char c = text[i];
 		if (std::isalpha(c) || std::isdigit(c) || std::ispunct(c)){
-            if(i == message->text.size() - 1)
-                return message->text.size();
+            if(i == text.size() - 1)
+                return text.size();
 			continue;
         }
 
@@ -364,17 +375,22 @@ std::size_t SimpleBot::GetCommandLength(TgBot::Message::Ptr message){
 }
 
 std::string SimpleBot::GetTextWithoutCommand(TgBot::Message::Ptr message) {
-    auto length = GetCommandLength(message);
+    const auto &text = message->text.size() ? message->text : message->caption;
+    
+    return GetTextWithoutCommand(text);
+}
+
+std::string SimpleBot::GetTextWithoutCommand(const std::string &text) {
+    auto length = GetCommandLength(text);
 
     if(!length)
         return {};
 
-    if(message->text.size() == length)
+    if(text.size() == length)
         return "";
 
-	return message->text.substr(length);
+	return text.substr(length);
 }
-
 
 SimplePollBot::SimplePollBot(const std::string &token, std::int32_t limit, std::int32_t timeout):
     SimpleBot(token),
