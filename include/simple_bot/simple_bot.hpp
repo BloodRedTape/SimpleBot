@@ -71,6 +71,8 @@ public:
 
     void ClearOldUpdates();
 
+    void SendChatAction(TgBot::Message::Ptr source, const std::string &action);
+
     TgBot::Message::Ptr SendMessage(std::int64_t chat, std::int32_t topic, const std::string& message, std::int64_t reply_message = 0);
 
     TgBot::Message::Ptr SendMessage(TgBot::Message::Ptr source, const std::string& message, bool reply = false);

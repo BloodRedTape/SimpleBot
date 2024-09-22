@@ -130,6 +130,10 @@ void SimpleBot::ClearOldUpdates(){
     }
 }
 
+void SimpleBot::SendChatAction(TgBot::Message::Ptr source, const std::string& action) {
+    getApi().sendChatAction(source->chat->id, action, source->isTopicMessage ? source->messageThreadId : 0);
+}
+
 TgBot::Message::Ptr SimpleBot::SendMessage(std::int64_t chat, std::int32_t topic, const std::string& message, std::int64_t reply_message) {
     return SendMessage(chat, topic, message, nullptr, reply_message);
 }
